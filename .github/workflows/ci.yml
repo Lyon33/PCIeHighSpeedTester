@@ -20,17 +20,16 @@ jobs:
       - name: Install Python deps
         run: pip install -r requirements.txt
 
-      - name: Setup
+      - name: Setup + Compile C Tool
         run: bash scripts/setup_env.sh
 
-      - name: Functional Tests
-        run: python -m pytest tests/functional/ -v --html=reports/report.html --self-contained-html || true
+      - name: Run YAML Driven Tests
+        run: python -m pytest tests/test_yaml_driven.py -v --html=reports/report.html --self-contained-html || true
 
-      - name: Performance Tests
-        run: bash scripts/performance_test.sh
-
-      - name: Analyze Results
-        run: python src/analyze_results.py
+      - name: Performance + Analysis
+        run: |
+          bash scripts/performance_test.sh
+          python src/analyze_results.py
 
       - name: Upload Reports
         uses: actions/upload-artifact@v4

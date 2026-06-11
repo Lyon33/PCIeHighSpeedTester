@@ -1,14 +1,49 @@
-test_env:
-  os: ubuntu
-  pcie_version: 4.0
-  devices:
-    - nvme
-    - serdes
+# 创建 YAML 测试配置
+# PCIeHighSpeedTester 测试用例配置
+# 支持 YAML 驱动，易于扩展（公司内部流程风格）
 
-performance:
-  runtime: 300
-  iops_target: 1000000
+global:
+  project: "芯潮流 PCIe/CXL 存储加速卡测试"
+  version: "1.0"
+  timeout: 30
 
-reporting:
-  format: html,pdf
-  email_notify: false
+test_suites:
+  - name: "PCIe 设备枚举与配置空间"
+    enabled: true
+    tests:
+      - id: TC001
+        name: "设备枚举"
+        command: "lspci | grep -i 'nvme|pci' || echo 'SIM_MODE'"
+        expected: "PASS"
+        description: "验证 PCIe 设备可见性"
+
+      - id: TC002
+        name: "配置空间读取"
+        command: "lspci -xxx | head -c 300"
+        expected: "PASS"
+        description: "检查 PCIe 配置空间（Vendor ID, Device ID 等）"
+
+  - name: "寄存器读写验证"
+    enabled: true
+    tests:
+      - id: TC003
+        name: "寄存器读取模拟"
+        command: "./tools/pcie_reg_rw read 0xf0000000 0x100"
+        expected: "Register value"
+        description: "模拟芯片 BAR 寄存器读取"
+
+      - id: TC004
+        name: "寄存器写入模拟"
+        command: "./tools/pcie_reg_rw write 0xf0000000 0x04 0xABCD"
+        expected: "Write successful"
+        description: "模拟固件/驱动寄存器配置"
+
+  - name: "性能基准测试"
+    enabled: true
+    tests:
+      - id: TC005
+        name: "fio 顺序读"
+        command: "bash scripts/performance_test.sh"
+        expected: "性能测试完成"
+        description: "模拟 DMA 高带宽传输"
+EOF

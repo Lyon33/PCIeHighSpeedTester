@@ -10,13 +10,29 @@
 
 PCIeHighSpeedTester 是一个端到端的自动化测试平台，专为高速接口芯片（如 PCIe 4.0/5.0、CXL、SerDes）设计，用于驱动、固件和管理软件的功能、性能、兼容性和稳定性测试。
 
-本项目高度匹配 **芯潮流科技有限公司** “软件测试工程师（高速接口芯片方向）” JD 要求，模拟本地存储加速卡（LSA）场景，支持 NVMe 虚拟化、数据传输等关键测试。
 
 **核心价值**：
 - 自动化环境搭建与测试执行，提升测试效率 70%+
+- YAML 配置驱动测试用例（易扩展）
+- Python + C 混合开发
+- fio 性能基准 + 数据分析报告（Excel + 图表）助力问题快速定位
 - 全面覆盖 PCIe 协议关键点（配置空间、BAR、DMA、MSI-X 等）
-- 集成数据分析与可视化报告，助力问题快速定位
-- 支持 CI/CD 持续集成
+- Github CI/CD 全自动回归测试
+- 支持云端模拟模式（无硬件也可运行）
+
+## 核心工具使用
+
+### C 语言寄存器读写工具（tools/pcie_reg_rw）
+
+```bash
+# 编译（setup_env.sh 已自动执行）
+cd tools && gcc -o pcie_reg_rw pcie_reg_rw.c -O2 && cd ..
+
+# 使用示例
+./tools/pcie_reg_rw read 0xf0000000 0x100
+./tools/pcie_reg_rw write 0xf0000000 0x04 0x12345678
+```
+> 功能：模拟芯片BAR 映射、寄存器配置验证、驱动调试
 
 ## 快速开始
 
@@ -28,7 +44,7 @@ PCIeHighSpeedTester 是一个端到端的自动化测试平台，专为高速接
 
 ### 2. 一键部署
 ```bash
-git clone https://github.com/yourusername/PCIeHighSpeedTester.git
+git clone https://github.com/Lyon33/PCIeHighSpeedTester.git
 cd PCIeHighSpeedTester
 bash scripts/setup_env.sh
 ```
@@ -37,6 +53,7 @@ bash scripts/setup_env.sh
 ```bash
 # 功能测试
 python -m pytest tests/functional/ -v --html=reports/report.html
+python src/analyze_results.py
 
 # 性能测试
 bash scripts/performance_test.sh
@@ -52,7 +69,7 @@ PCIeHighSpeedTester/
 │   ├── performance/      # 性能测试
 │   └── stress/           # 压力测试
 ├── src/                  # 核心 Python/C 模块
-├── tools/                # C 语言底层工具
+├── tools/                # 底层寄存器工具
 ├── reports/              # 测试报告输出
 ├── config/               # YAML 配置
 ├── docs/                 # 文档
@@ -100,10 +117,3 @@ PCIeHighSpeedTester/
 
     欢迎 PR！项目完全开源，旨在帮助芯片测试从业者。
 
-## 联系
-
-    - GitHub Issues
-    - Demo 视频： [Bilibili/YouTube 链接]
-
-    **本项目为学习与求职作品，模拟真实企业测试场景。**
-# PCIeHighSpeedTester
