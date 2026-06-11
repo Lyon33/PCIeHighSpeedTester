@@ -70,7 +70,15 @@ python src/analyze_results.py
 
 # 性能测试
 bash scripts/performance_test.sh
+
+# CXL 模拟测试
+python -m pytest tests/test_cxl_simulation.py -m cxl
+
+# Web Dashboard (可视化)
+pip install streamlit
+streamlit run dashboard.py
 ```
+> 提供交互式可视化：性能图标、CXL状态、异常日志一览
 
 ## 项目架构
 
@@ -86,7 +94,8 @@ PCIeHighSpeedTester/
 ├── reports/              # 测试报告输出
 ├── config/               # YAML 配置
 ├── docs/                 # 文档
-├── requirements.txt
+├── requirements.txt      # 工具库安装列表
+├── dashboard.py          # 可视化脚本
 ├── LICENSE
 └── README.md
 ```
@@ -108,12 +117,17 @@ PCIeHighSpeedTester/
     - DMA 传输效率
     - 长时间稳定性
 
-### 4. 自动化框架
+### 4. CXL 模拟测试
+    - CXL Memory Semantics（缓存一致性）
+    - CXL.io 协议模拟
+    - 性能影响对比
+
+### 5. 自动化框架
     - YAML 驱动测试用例
     - Pytest + Allure / HTML 报告
     - GitHub Actions CI/CD
 
-### 5. 数据分析
+### 6. 数据分析
     - pandas + matplotlib 可视化
     - 自动解析 dmesg / lspci 日志
     - Excel/PDF 报告生成

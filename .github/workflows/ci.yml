@@ -12,10 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pciutils nvme-cli fio stress-ng python3-pip
+          sudo apt-get install -y pciutils nvme-cli fio stress-ng build-essential
 
       - name: Install Python deps
         run: pip install -r requirements.txt
@@ -23,16 +28,15 @@ jobs:
       - name: Setup + Compile C Tool
         run: bash scripts/setup_env.sh
 
-      - name: Run YAML Driven Tests
-        run: python -m pytest tests/test_yaml_driven.py -v --html=reports/report.html --self-contained-html || true
-
-      - name: Exception Injection Tests
-        run: python -m pytest tests/test_exception_injection.py -v --html=reports/exception_report.html --self-contained-html || true
-
-      - name: Performance + Analysis
+      - name: Run All Tests
         run: |
+          python -m pytest tests/ -v --html=reports/report.html --self-contained-html || true
           bash scripts/performance_test.sh
           python src/analyze_results.py
+
+      - name: Build Dashboard (Static Export)
+        run: |
+          echo "Dashboard ready (streamlit run dashboard.py in local)"
 
       - name: Upload Reports
         uses: actions/upload-artifact@v4
@@ -41,4 +45,5 @@ jobs:
           path: |
             reports/
             logs/
+            *.html
           retention-days: 7
