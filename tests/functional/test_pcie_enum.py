@@ -13,8 +13,7 @@ import pytest
 def run_command(cmd):
     result = subprocess.run(cmd, shell=True, 
 capture_output=True, text=True)
-    return result.returncode == 0, result.stdout + 
-result.stderr
+    return result.returncode == 0, result.stdout + result.stderr
 
 def test_pcie_devices():
     """测试 PCIe 设备枚举"""""
