@@ -1,0 +1,20 @@
+  - name: "异常注入与鲁棒性测试"
+    enabled: true
+    tests:
+      - id: TC006
+        name: "热插拔模拟"
+        command: "python -m pytest tests/test_exception_injection.py::test_hotplug_simulation -q"
+        expected: "passed"
+        description: "模拟 PCIe 设备热插拔场景，验证驱动处理能力"
+
+      - id: TC007
+        name: "AER 错误注入"
+        command: "python -m pytest tests/test_exception_injection.py::test_aer_error_injection -q"
+        expected: "passed"
+        description: "注入 AER/链路错误，测试错误日志解析与定位"
+
+      - id: TC008
+        name: "驱动鲁棒性验证"
+        command: "python -m pytest tests/test_exception_injection.py::test_driver_robustness -q"
+        xpected: "passed"
+        description: "验证在异常注入下的系统恢复能力"
