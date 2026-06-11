@@ -25,3 +25,6 @@ echo "=== PCIe 设备枚举 ==="
 lspci -vvv | head -n 50
 
 echo "部署完成！运行 'bash scripts/run_tests.sh' 开始测试。"
+echo "编译 C 寄存器工具..."
+cd tools && gcc -o pcie_reg_rw pcie_reg_rw.c -O2 && cd ..
+echo "✅ C 工具编译完成: tools/pcie_reg_rw"
