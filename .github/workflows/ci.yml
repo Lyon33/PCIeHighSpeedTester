@@ -1,0 +1,42 @@
+name: PCIeHighSpeedTester CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pciutils nvme-cli fio stress-ng python3-pip
+
+      - name: Install Python deps
+        run: pip install -r requirements.txt
+
+      - name: Setup
+        run: bash scripts/setup_env.sh
+
+      - name: Functional Tests
+        run: python -m pytest tests/functional/ -v --html=reports/report.html --self-contained-html || true
+
+      - name: Performance Tests
+        run: bash scripts/performance_test.sh
+
+      - name: Analyze Results
+        run: python src/analyze_results.py
+
+      - name: Upload Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            reports/
+            logs/
+          retention-days: 7

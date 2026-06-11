@@ -1,0 +1,14 @@
+test_env:
+  os: ubuntu
+  pcie_version: 4.0
+  devices:
+    - nvme
+    - serdes
+
+performance:
+  runtime: 300
+  iops_target: 1000000
+
+reporting:
+  format: html,pdf
+  email_notify: false
